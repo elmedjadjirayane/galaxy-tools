@@ -1,0 +1,85 @@
+<tool id="quality_control" name="Quality control for GWAS analysis" version="1.0.0">
+    <description>
+        Run quality control on genotype data for GWAS analysis.
+    </description>
+<requirements>
+        <requirement type="package" version="2.00a2.3">
+            plink2
+        </requirement>
+        <requirement type="package" version="1.90b6.12">
+            plink
+        </requirement>
+</requirements>
+<command>
+ <![CDATA[
+
+bash '$__tool_directory__/qc.sh' '$vcf_file' '$pheno_file' '$maf_threshold' '$hwe_threshold' '$mgcf_threshold' '$max_heterozygosity' '$performLDcond.window_size' '$performLDcond.step_size' '$performLDcond.ld_threshold' '$pbed_output' '$__tool_directory__' '$performLDcond.performLD' '$fid';
+
+
+
+]]>
+</command>
+<inputs>
+
+<param name="vcf_file" type="data" format="vcf_bgzip" />
+<param name="fid" label="Family ID column" type="boolean" checked="true" help="Yes if phenotype file has Family ID column, else No. (The format is what is expected by Plink1.9)"/> 
+<param name="pheno_file" type="data" format="tabular" />
+<param name="maf_threshold" type="float" value="0" label="maf Threshold value" help="Set the threshold for minor allele frequency" />
+<param name="hwe_threshold" type="float" value="0" label="hwe Threshold value" help="Set the threshold for Hardy-Weinberg equilibrium" />
+<param name="mgcf_threshold" type="float" value="0" label="mgcf Threshold value" help="Set the threshold for minor genotypic class frequency" />
+<param name="max_heterozygosity" type="float" value="1" label="max heterozygosity Threshold value" help="Set the threshold for heterozygosity" />
+<conditional name="performLDcond">
+   <param name="performLD" type="select" label="Do you want to perform LD pruning?">
+        <option value="true" selected="true">Yes</option>
+        <option value="false">No</option>
+    </param>
+    <when value="true">
+        <param name="ld_threshold" type="float" value="0.99" label="LD Threshold value" help="Set the threshold for LD." />
+        <param name="window_size" type="float" value="50" label="Window size" help="Set the window size for LD pruning." />
+        <param name="step_size" type="float" value="5" label="Step size" help="Set the step size for LD pruning." />
+    </when>
+    <when value="false">
+    </when>
+</conditional>
+
+</inputs>
+<outputs>
+<data name="pbed_output" format="pbed"/>
+</outputs>
+<tests>
+   <test >
+        <param name="fid" value="true"/>
+        <param name="vcf_file" ftype="vcf_bgzip" value="geno.vcf_bgzip"/>
+        <param name="pheno_file" ftype="tabular" value="pheno.tabular"/>
+        <param name="maf_threshold" value="0" />
+        <param name="hwe_threshold" value="0" />
+        <param name="mgcf_threshold" value="0" />
+        <param name="max_heterozygosity" value="1" />
+       <conditional name="performLD">
+            <param name="performLD" value="true"/>
+            <param name="ld_threshold" value="0.9999999"/>
+            <param name="window_size" value="50"/>
+            <param name="step_size" value="5"/>
+           
+    </conditional>
+
+        <output name="pbed_output" file="final.html" ftype="pbed">
+            <extra_files type="file" name="Composite Dataset.bim" value="final.bim"/>
+            <extra_files type="file" name="Composite Dataset.bed" value="final.bed"/>
+            <extra_files type="file" name="Composite Dataset.fam" value="final.fam"/>
+            <extra_files type="file" name="RgeneticsData.bim" value="final.bim"/>
+            <extra_files type="file" name="RgeneticsData.bed" value="final.bed"/>
+            <extra_files type="file" name="RgeneticsData.fam" value="final.fam"/>
+        </output>
+    </test>
+</tests>
+<help>
+        plink is a free, open-source whole genome association analysis toolset, designed to perform a range of basic, large-scale analyses in a computationally efficient manner.
+        For detailed usage notes, visit http://www.cog-genomics.org/plink/1.9/
+    </help>
+    <citations>
+        <citation type="doi">
+            10.1186/s13742-015-0047-8
+        </citation>
+    </citations>
+</tool>
