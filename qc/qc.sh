@@ -35,7 +35,7 @@ mkdir -p ./plink2_output
 
 
 # Step 3: Convert VCF to PLINK binary format
-plink --allow-extra-chr --allow-no-sex --vcf "$vcf_file" --make-bed --pheno --double-id "$TMPDIR/temp_pheno" --out ./plink2_output/output || {
+plink --allow-extra-chr --allow-no-sex --vcf "$vcf_file" --make-bed --double-id --pheno "$TMPDIR/temp_pheno" --out ./plink2_output/output || {
     echo "Error: Failed to convert VCF to PLINK format."; exit 1;
 }
 
