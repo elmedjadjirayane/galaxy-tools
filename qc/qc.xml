@@ -1,4 +1,4 @@
-<tool id="quality_control" name="Quality control for GWAS analysis" version="1.0.0">
+<tool id="quality_control" name="Quality control for GWAS analysis" version="1.0.1">
     <description>
         Run quality control on genotype data for GWAS analysis.
     </description>
