@@ -10,34 +10,36 @@ maf_threshold="$3"
 hwe_threshold="$4"
 mgcf_threshold="$5"
 max_heterozygosity="$6"
-window_size="$7"
-step_size="$8"
-ld_threshold="$9"
 pbed_output="${10}"
 __tool_directory__="${11}"
 perform_ld_pruning="${12}" # Boolean to control steps 10 and 11
 fid="${13}"
-pLD="&{14}"
-echo "this what we have inside pLD" "$pLD"
+
+
 # Temporary directory
 TMPDIR=$(mktemp -d)
 
 echo "Step 1: Prepare phenotype file"
 if [ "$fid" == "false" ]; then
-    echo "Adding a second column"
+    echo "Adding a second column and replacing empty cases with NA"
+    awk -F'\t' -v OFS='\t' '{if ($2 == "") $2 = "NA"; print}' $TMPDIR/temp_pheno > $TMPDIR/temp_pheno_corrected
     awk 'BEGIN{OFS="\t"} {print $1, $1, substr($0, index($0, $2))}' "$pheno_file" > "$TMPDIR/temp_pheno"
+    
 else
-    echo "No changes made to phenotype file"
+    echo "No changes made to phenotype file, replacing empty cases with NA"
+    awk -F'\t' -v OFS='\t' '{if ($3 == "") $3 = "NA"; print}' $TMPDIR/temp_pheno > $TMPDIR/temp_pheno_corrected
     cp "$pheno_file" "$TMPDIR/temp_pheno"
 fi
 echo "check phenotype file"
 cat "$TMPDIR/temp_pheno"
+
+
 echo "Step 2: Create output directories"
 mkdir -p ./plink2_output
 
 
 # Step 3: Convert VCF to PLINK binary format
-plink --allow-extra-chr --allow-no-sex --vcf "$vcf_file" --make-bed --double-id --pheno "$TMPDIR/temp_pheno" --out ./plink2_output/output || {
+plink --allow-extra-chr --allow-no-sex --vcf "$vcf_file" --make-bed --double-id --pheno "$TMPDIR/temp_pheno_corrected" --out ./plink2_output/output || {
     echo "Error: Failed to convert VCF to PLINK format."; exit 1;
 }
 
@@ -75,6 +77,10 @@ pbed_output_files="${pbed_output%.dat}"_files
 mkdir $pbed_output_files
 if [ "$perform_ld_pruning" = "true" ]; then
     echo "Perform LD pruning"
+
+    window_size="$7"
+    step_size="$8"
+    ld_threshold="$9"
     plink2 --bfile ./plink2_output/output_filtered_hz --allow-no-sex --indep-pairwise "$window_size" "$step_size" "$ld_threshold" --out ./plink2_output/output_pruned || {
         echo "Error: LD pruning failed."; exit 1;
     }
