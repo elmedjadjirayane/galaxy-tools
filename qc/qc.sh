@@ -18,12 +18,13 @@ fid="${13}"
 
 # Temporary directory
 TMPDIR=$(mktemp -d)
-
+cat $pheno_file > $TMPDIR/temp_pheno	
 echo "Step 1: Prepare phenotype file"
 if [ "$fid" == "false" ]; then
     echo "Adding a second column and replacing empty cases with NA"
-    awk -F'\t' -v OFS='\t' '{if ($2 == "") $2 = "NA"; print}' $TMPDIR/temp_pheno > $TMPDIR/temp_pheno_corrected
-    awk 'BEGIN{OFS="\t"} {print $1, $1, substr($0, index($0, $2))}' "$pheno_file" > "$TMPDIR/temp_pheno"
+    awk -F'\t' -v OFS='\t' '{if ($2 == "") $2 = "NA"; print}' $TMPDIR/temp_pheno > $TMPDIR/temp_pheno_inter
+    cat $TMPDIR/temp_pheno_inter
+    awk 'BEGIN{OFS="\t"} {print $1, $1, substr($0, index($0, $2))}' $TMPDIR/temp_pheno_inter > $TMPDIR/temp_pheno_corrected
     
 else
     echo "No changes made to phenotype file, replacing empty cases with NA"
@@ -31,7 +32,7 @@ else
     cp "$pheno_file" "$TMPDIR/temp_pheno"
 fi
 echo "check phenotype file"
-cat "$TMPDIR/temp_pheno"
+cat "$TMPDIR/temp_pheno_corrected"
 
 
 echo "Step 2: Create output directories"

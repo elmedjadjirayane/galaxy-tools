@@ -1,4 +1,4 @@
-<tool id="quality_control" name="Quality control for GWAS analysis" version="1.0.1">
+<tool id="quality_control" name="Quality control for GWAS analysis" version="1.0.0">
     <description>
         Run quality control on genotype data for GWAS analysis.
     </description>
@@ -13,8 +13,12 @@
 <command>
  <![CDATA[
 
-bash '$__tool_directory__/qc.sh' '$vcf_file' '$pheno_file' '$maf_threshold' '$hwe_threshold' '$mgcf_threshold' '$max_heterozygosity' '$performLDcond.window_size' '$performLDcond.step_size' '$performLDcond.ld_threshold' '$pbed_output' '$__tool_directory__' '$performLDcond.performLD' '$fid' '$performLDcond' ;
 
+#if '$performLDcond.performLD':
+    bash '$__tool_directory__/qc.sh' '$vcf_file' '$pheno_file' '$maf_threshold' '$hwe_threshold' '$mgcf_threshold' '$max_heterozygosity' '$performLDcond.window_size' '$performLDcond.step_size' '$performLDcond.ld_threshold' '$pbed_output' '$__tool_directory__' '$performLDcond.performLD' '$fid';
+#else
+    bash '$__tool_directory__/qc.sh' '$vcf_file' '$pheno_file' '$maf_threshold' '$hwe_threshold' '$mgcf_threshold' '$max_heterozygosity' '$pbed_output' '$__tool_directory__' '$performLDcond.performLD' '$fid';
+#end if
 
 
 ]]>
@@ -39,6 +43,10 @@ bash '$__tool_directory__/qc.sh' '$vcf_file' '$pheno_file' '$maf_threshold' '$hw
         <param name="step_size" type="float" value="5" label="Step size" help="Set the step size for LD pruning." />
     </when>
     <when value="false">
+         <param name="ld_threshold" type="float" value="-1" label="LD Threshold value" help="Set the threshold for LD." />
+        <param name="window_size" type="float" value="-1" label="Window size" help="Set the window size for LD pruning." />
+        <param name="step_size" type="float" value="-1" label="Step size" help="Set the step size for LD pruning." />
+
     </when>
 </conditional>
 
@@ -70,6 +78,56 @@ bash '$__tool_directory__/qc.sh' '$vcf_file' '$pheno_file' '$maf_threshold' '$hw
             <extra_files type="file" name="RgeneticsData.bim" value="final.bim"/>
             <extra_files type="file" name="RgeneticsData.bed" value="final.bed"/>
             <extra_files type="file" name="RgeneticsData.fam" value="final.fam"/>
+        </output>
+    </test>
+     <test >
+        <param name="fid" value="false"/>
+        <param name="vcf_file" ftype="vcf_bgzip" value="geno.vcf_bgzip"/>
+        <param name="pheno_file" ftype="tabular" value="pheno_nocol.tabular"/>
+        <param name="maf_threshold" value="0" />
+        <param name="hwe_threshold" value="0" />
+        <param name="mgcf_threshold" value="0" />
+        <param name="max_heterozygosity" value="1" />
+       <conditional name="performLD">
+            <param name="performLD" value="true"/>
+            <param name="ld_threshold" value="0.9999999"/>
+            <param name="window_size" value="50"/>
+            <param name="step_size" value="5"/>
+           
+    </conditional>
+
+        <output name="pbed_output" file="final.html" ftype="pbed">
+            <extra_files type="file" name="Composite Dataset.bim" value="final.bim"/>
+            <extra_files type="file" name="Composite Dataset.bed" value="final.bed"/>
+            <extra_files type="file" name="Composite Dataset.fam" value="final_nocol.fam"/>
+            <extra_files type="file" name="RgeneticsData.bim" value="final.bim"/>
+            <extra_files type="file" name="RgeneticsData.bed" value="final.bed"/>
+            <extra_files type="file" name="RgeneticsData.fam" value="final_nocol.fam"/>
+        </output>
+    </test>
+    <test >
+        <param name="fid" value="false"/>
+        <param name="vcf_file" ftype="vcf_bgzip" value="geno.vcf_bgzip"/>
+        <param name="pheno_file" ftype="tabular" value="pheno_nocol_empty.tabular"/>
+        <param name="maf_threshold" value="0" />
+        <param name="hwe_threshold" value="0" />
+        <param name="mgcf_threshold" value="0" />
+        <param name="max_heterozygosity" value="1" />
+       <conditional name="performLD">
+            <param name="performLD" value="true"/>
+            <param name="ld_threshold" value="0.9999999"/>
+            <param name="window_size" value="50"/>
+            <param name="step_size" value="5"/>
+           
+    </conditional>
+
+        <output name="pbed_output" file="final.html" ftype="pbed">
+            <extra_files type="file" name="Composite Dataset.bim" value="final.bim"/>
+            <extra_files type="file" name="Composite Dataset.bed" value="final.bed"/>
+            <extra_files type="file" name="Composite Dataset.fam" value="final_nocol_empty.fam"/>
+            <extra_files type="file" name="RgeneticsData.bim" value="final.bim"/>
+            <extra_files type="file" name="RgeneticsData.bed" value="final.bed"/>
+            <extra_files type="file" name="RgeneticsData.fam" value="final_nocol_empty.fam"/>
         </output>
     </test>
 </tests>
