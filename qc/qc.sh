@@ -17,6 +17,8 @@ pbed_output="${10}"
 __tool_directory__="${11}"
 perform_ld_pruning="${12}" # Boolean to control steps 10 and 11
 fid="${13}"
+pLD="&{14}"
+echo "this what we have inside pLD" "$pLD"
 # Temporary directory
 TMPDIR=$(mktemp -d)
 

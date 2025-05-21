@@ -13,7 +13,7 @@
 <command>
  <![CDATA[
 
-bash '$__tool_directory__/qc.sh' '$vcf_file' '$pheno_file' '$maf_threshold' '$hwe_threshold' '$mgcf_threshold' '$max_heterozygosity' '$performLDcond.window_size' '$performLDcond.step_size' '$performLDcond.ld_threshold' '$pbed_output' '$__tool_directory__' '$performLDcond.performLD' '$fid';
+bash '$__tool_directory__/qc.sh' '$vcf_file' '$pheno_file' '$maf_threshold' '$hwe_threshold' '$mgcf_threshold' '$max_heterozygosity' '$performLDcond.window_size' '$performLDcond.step_size' '$performLDcond.ld_threshold' '$pbed_output' '$__tool_directory__' '$performLDcond.performLD' '$fid' '$performLDcond' ;
 
 
 
