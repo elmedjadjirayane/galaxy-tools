@@ -23,7 +23,6 @@ echo "Step 1: Prepare phenotype file"
 if [ "$fid" == "false" ]; then
     echo "Adding a second column and replacing empty cases with NA"
     awk -F'\t' -v OFS='\t' '{if ($2 == "") $2 = "NA"; print}' $TMPDIR/temp_pheno > $TMPDIR/temp_pheno_inter
-    cat $TMPDIR/temp_pheno_inter
     awk 'BEGIN{OFS="\t"} {print $1, $1, substr($0, index($0, $2))}' $TMPDIR/temp_pheno_inter > $TMPDIR/temp_pheno_corrected
     
 else
@@ -32,7 +31,6 @@ else
     cp "$pheno_file" "$TMPDIR/temp_pheno"
 fi
 echo "check phenotype file"
-cat "$TMPDIR/temp_pheno_corrected"
 
 
 echo "Step 2: Create output directories"
@@ -92,18 +90,12 @@ if [ "$perform_ld_pruning" = "true" ]; then
     }
 
     echo "Copy final files to output directory from pruned data"
-    cp ./plink2_output/final.bim "$pbed_output_files/Composite Dataset.bim"
-    cp ./plink2_output/final.bed "$pbed_output_files/Composite Dataset.bed"
-    cp ./plink2_output/final.fam "$pbed_output_files/Composite Dataset.fam"
     cp ./plink2_output/final.bim "$pbed_output_files/RgeneticsData.bim"
     cp ./plink2_output/final.bed "$pbed_output_files/RgeneticsData.bed"
     cp ./plink2_output/final.fam "$pbed_output_files/RgeneticsData.fam"
 
 else
     echo " LD pruning is not performed, use output_filtered_hz instead of final"
-    cp ./plink2_output/output_filtered_hz.bim "$pbed_output_files/Composite Dataset.bim"
-    cp ./plink2_output/output_filtered_hz.bed "$pbed_output_files/Composite Dataset.bed"
-    cp ./plink2_output/output_filtered_hz.fam "$pbed_output_files/Composite Dataset.fam"
     cp ./plink2_output/output_filtered_hz.bim "$pbed_output_files/RgeneticsData.bim"
     cp ./plink2_output/output_filtered_hz.bed "$pbed_output_files/RgeneticsData.bed"
     cp ./plink2_output/output_filtered_hz.fam "$pbed_output_files/RgeneticsData.fam"

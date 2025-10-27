@@ -1,0 +1,3 @@
+description: This tools does quality control on imputed genotype data to prepare it for GWAS analysis
+name: gwas_quality_control_plink
+owner: rayane_elm
