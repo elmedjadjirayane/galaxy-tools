@@ -58,7 +58,7 @@ plink --bfile ./plink2_output/output_filtered --allow-no-sex --freqx --out ./pli
 }
 
 echo " Step 7: Run quality control script"
-python "$__tool_directory__/qc.py" "$mgcf_threshold" "$max_heterozygosity" || {
+python "./qc.py" "$mgcf_threshold" "$max_heterozygosity" || {
     echo "Error: QC script failed."; exit 1;
 }
 
