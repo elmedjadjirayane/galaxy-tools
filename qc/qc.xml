@@ -33,19 +33,19 @@
         <param name="vcf_file" type="data" format="vcf_bgzip"/>
         <param name="fid" type="boolean" checked="true" label="Family ID column" help="Yes if phenotype file has Family ID column, else No. (The format is what is expected by Plink1.9)"/>
         <param name="pheno_file" type="data" format="tabular"/>
-        <param name="maf_threshold" type="float" value="0" label="maf Threshold value" help="Set the threshold for minor allele frequency"/>
-        <param name="hwe_threshold" type="float" value="0" label="hwe Threshold value" help="Set the threshold for Hardy-Weinberg equilibrium"/>
-        <param name="mgcf_threshold" type="float" value="0" label="mgcf Threshold value" help="Set the threshold for minor genotypic class frequency"/>
-        <param name="max_heterozygosity" type="float" value="1" label="max heterozygosity Threshold value" help="Set the threshold for heterozygosity"/>
+        <param name="maf_threshold" type="float" value="0" min="0" max="0.5" label="maf Threshold value" help="Set the threshold for minor allele frequency"/>
+        <param name="hwe_threshold" type="float" value="1" min="0" max="1" label="hwe Threshold value" help="Set the threshold for Hardy-Weinberg equilibrium"/>
+        <param name="mgcf_threshold" type="float" value="0" min="0" max="0.33" label="mgcf Threshold value" help="Set the threshold for minor genotypic class frequency"/>
+        <param name="max_heterozygosity" type="float" value="1" min="0" max="1" label="max heterozygosity Threshold value" help="Set the threshold for heterozygosity"/>
         <conditional name="performLDcond">
             <param name="performLD" type="select" label="Do you want to perform LD pruning?">
                 <option value="true" selected="true">Yes</option>
                 <option value="false">No</option>
             </param>
             <when value="true">
-                <param name="ld_threshold" type="float" value="0.99" label="LD Threshold value" help="Set the threshold for LD."/>
-                <param name="window_size" type="float" value="50" label="Window size" help="Set the window size for LD pruning."/>
-                <param name="step_size" type="float" value="5" label="Step size" help="Set the step size for LD pruning."/>
+                <param name="ld_threshold" type="float" value="0.99" min="0" max="1" label="LD Threshold value" help="Set the threshold for LD."/>
+                <param name="window_size" type="float" value="50" min="10" max="500" label="Window size" help="Set the window size for LD pruning."/>
+                <param name="step_size" type="float" value="5" min="1" max="10" label="Step size" help="Set the step size for LD pruning."/>
             </when>
             <when value="false">
                 <param name="ld_threshold" type="float" value="-1" label="LD Threshold value" help="Set the threshold for LD."/>
