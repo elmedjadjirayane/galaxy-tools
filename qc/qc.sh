@@ -37,23 +37,23 @@ echo "Step 2: Create output directories"
 mkdir -p ./plink2_output
 
 
-# Step 3: Convert VCF to PLINK binary format
+echo "Step 3: Convert VCF to PLINK binary format"
 plink --allow-extra-chr --allow-no-sex --vcf "$vcf_file" --make-bed --double-id --pheno "$TMPDIR/temp_pheno_corrected" --out ./plink2_output/output || {
     echo "Error: Failed to convert VCF to PLINK format."; exit 1;
 }
 
 echo "Step 4: Standardize variant IDs"
-plink2 --bfile ./plink2_output/output --allow-no-sex --set-all-var-ids @:# --make-bed --out ./plink2_output/output_renamed || {
+plink2 --bfile ./plink2_output/output --allow-extra-chr --allow-no-sex --set-all-var-ids @:# --make-bed --out ./plink2_output/output_renamed || {
     echo "Error: Failed to standardize variant IDs."; exit 1;
 }
 
 echo " Step 5: Filter by MAF and HWE thresholds"
-plink2 --bfile ./plink2_output/output_renamed --allow-no-sex --maf "$maf_threshold" --hwe "$hwe_threshold" --make-bed --out ./plink2_output/output_filtered 2>&1 || {
+plink2 --bfile ./plink2_output/output_renamed --allow-extra-chr --allow-no-sex --maf "$maf_threshold" --hwe "$hwe_threshold" --make-bed --out ./plink2_output/output_filtered 2>&1 || {
     echo "Error: Failed to filter data by MAF and HWE."; exit 1;
 }
 
 echo " Step 6: Calculate allele frequencies"
-plink --bfile ./plink2_output/output_filtered --allow-no-sex --freqx --out ./plink2_output/output_frequencies || {
+plink --bfile ./plink2_output/output_filtered --allow-extra-chr --allow-no-sex --freqx --out ./plink2_output/output_frequencies || {
     echo "Error: Failed to calculate allele frequencies."; exit 1;
 }
 
@@ -63,12 +63,12 @@ python "$__tool_directory__/qc.py" "$mgcf_threshold" "$max_heterozygosity" || {
 }
 
 echo "Step 8: Filter SNPs based on MGCF"
-plink2 --bfile ./plink2_output/output_filtered --allow-no-sex --extract ./plink2_output/mgcf_filtered_snps.txt --make-bed --out ./plink2_output/output_filtered_mgcf || {
+plink2 --bfile ./plink2_output/output_filtered --allow-extra-chr --allow-no-sex --extract ./plink2_output/mgcf_filtered_snps.txt --make-bed --out ./plink2_output/output_filtered_mgcf || {
     echo "Error: Failed to filter SNPs based on MGCF."; exit 1;
 }
 
 echo " Step 9: Filter SNPs based on heterozygosity"
-plink2 --bfile ./plink2_output/output_filtered_mgcf --allow-no-sex --extract ./plink2_output/hz_filtered_snps.txt --make-bed --out ./plink2_output/output_filtered_hz || {
+plink2 --bfile ./plink2_output/output_filtered_mgcf --allow-extra-chr --allow-no-sex --extract ./plink2_output/hz_filtered_snps.txt --make-bed --out ./plink2_output/output_filtered_hz || {
     echo "Error: Failed to filter SNPs based on heterozygosity."; exit 1;
 }
 echo "Creating extra files directory"
@@ -80,12 +80,12 @@ if [ "$perform_ld_pruning" = "true" ]; then
     window_size="$7"
     step_size="$8"
     ld_threshold="$9"
-    plink2 --bfile ./plink2_output/output_filtered_hz --allow-no-sex --indep-pairwise "$window_size" "$step_size" "$ld_threshold" --out ./plink2_output/output_pruned || {
+    plink2 --bfile ./plink2_output/output_filtered_hz --allow-extra-chr --allow-no-sex --indep-pairwise "$window_size" "$step_size" "$ld_threshold" --out ./plink2_output/output_pruned || {
         echo "Error: LD pruning failed."; exit 1;
     }
 
     echo "Step 11: Create final dataset"
-    plink2 --bfile ./plink2_output/output_filtered --allow-no-sex --extract ./plink2_output/output_pruned.prune.in --make-bed --out ./plink2_output/final || {
+    plink2 --bfile ./plink2_output/output_filtered --allow-extra-chr --allow-no-sex --extract ./plink2_output/output_pruned.prune.in --make-bed --out ./plink2_output/final || {
         echo "Error: Failed to create final dataset."; exit 1;
     }
 
